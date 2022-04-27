@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: go-serverless-lambda-apigw-offline-skeleton
+Resources:
+  Films:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: bin/films
+      Runtime: go1.x
+      Timeout: 60
+      Events:
+        SampleEvent:
+          Type: Api
+          Properties:
+            Path: /films/page/{page}
+            Method: get
+      Environment:
+        Variables:
+          FIREBASE_PROJECT_ID: yola-340622
+          FIREBASE_CREDENTIALS_FILE_NAME: yola-340622-firebase-adminsdk-823pn-0cad271a6c.json
+  Article:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: bin/articles
+      Runtime: go1.x
+      Timeout: 60
+      Events:
+        SampleEvent:
+          Type: Api
+          Properties:
+            Path: /film/article
+            Method: get
+      Environment:
+        Variables:
+          FIREBASE_PROJECT_ID: yola-340622
+          FIREBASE_CREDENTIALS_FILE_NAME: yola-340622-firebase-adminsdk-823pn-0cad271a6c.json
+  Video:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: bin/video
+      Runtime: go1.x
+      Timeout: 60
+      Events:
+        SampleEvent:
+          Type: Api
+          Properties:
+            Path: /movie/video
+            Method: get
+      Environment:
+        Variables:
+          FIREBASE_PROJECT_ID: yola-340622
+          FIREBASE_CREDENTIALS_FILE_NAME: yola-340622-firebase-adminsdk-823pn-0cad271a6c.json
