@@ -26,11 +26,6 @@ func init() {
 	collection := firestoreClient.Collection(schema.MOVIE_FILM_SOURCES_COLLECTION)
 	query := collection.Where("status", "==", true)
 	sources = parseSourceList(firebase.GetAll[schema.MovieFilmSource](query), allSources)
-	// go func(sources *[]source.Source) {
-	// 	firebase.Snapshots(query, func(data []schema.MovieSource) {
-	// 		*sources = parseSourceList(data, allSources)
-	// 	})
-	// }(&sources)
 }
 
 func parseSourceList(data []schema.MovieFilmSource, allSources []source.Source) []source.Source {
@@ -47,13 +42,14 @@ func parseSourceList(data []schema.MovieFilmSource, allSources []source.Source) 
 }
 
 func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (handler.Response, error) {
+	query := request.PathParameters["query"]
 	page, err := strconv.Atoi(request.PathParameters["page"])
 	if err != nil {
 		page = 1
 	}
 	result := make([]schema.MoviePost, 0)
 	for _, source := range sources {
-		result = append(result, source.FilmPostList(page)...)
+		result = append(result, source.SearchFilmPostList(query, page)...)
 	}
 	return handler.ServeResponse(result)
 }

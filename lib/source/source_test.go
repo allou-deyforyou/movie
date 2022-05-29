@@ -1,17 +1,12 @@
-package main
+package source_test
 
 import (
-	"context"
+	"log"
 	"net/http"
-	"strconv"
-
 	"server/lib/firebase"
-	"server/lib/handler"
 	"server/lib/schema"
 	"server/lib/source"
-
-	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-lambda-go/lambda"
+	"testing"
 )
 
 var sources []source.Source
@@ -26,11 +21,6 @@ func init() {
 	collection := firestoreClient.Collection(schema.MOVIE_FILM_SOURCES_COLLECTION)
 	query := collection.Where("status", "==", true)
 	sources = parseSourceList(firebase.GetAll[schema.MovieFilmSource](query), allSources)
-	// go func(sources *[]source.Source) {
-	// 	firebase.Snapshots(query, func(data []schema.MovieSource) {
-	// 		*sources = parseSourceList(data, allSources)
-	// 	})
-	// }(&sources)
 }
 
 func parseSourceList(data []schema.MovieFilmSource, allSources []source.Source) []source.Source {
@@ -46,18 +36,8 @@ func parseSourceList(data []schema.MovieFilmSource, allSources []source.Source) 
 	return result
 }
 
-func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (handler.Response, error) {
-	page, err := strconv.Atoi(request.PathParameters["page"])
-	if err != nil {
-		page = 1
-	}
-	result := make([]schema.MoviePost, 0)
+func Test(t *testing.T) {
 	for _, source := range sources {
-		result = append(result, source.FilmPostList(page)...)
+		log.Println(source.SearchFilmPostList("jumanji", 1))
 	}
-	return handler.ServeResponse(result)
-}
-
-func main() {
-	lambda.Start(Handler)
 }

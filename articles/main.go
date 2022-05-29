@@ -19,16 +19,16 @@ func init() {
 }
 
 func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (handler.Response, error) {
-	name := request.QueryStringParameters["name"]
+	name := request.QueryStringParameters["source"]
 	link := request.QueryStringParameters["link"]
 
 	firestoreClient, err := firebase.NewFirebaseClient()
 	if err != nil {
 		panic(err)
 	}
-	collection := firestoreClient.Collection(schema.MOVIE_SOURCES_COLLECTION)
+	collection := firestoreClient.Collection(schema.MOVIE_FILM_SOURCES_COLLECTION)
 	query := collection.Where("name", "==", name)
-	movieSource := firebase.GetAll[schema.MovieSource](query)[0]
+	movieSource := firebase.GetAll[schema.MovieFilmSource](query)[0]
 	var article *schema.MovieFilmArticle
 	for _, source := range allSources {
 		if source.Verify(movieSource.Name) {

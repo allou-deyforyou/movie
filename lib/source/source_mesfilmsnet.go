@@ -1,9 +1,11 @@
 package source
 
 import (
+	"encoding/json"
 	"fmt"
-	"html"
+	"io"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"server/lib/crawler"
@@ -12,21 +14,21 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-type Vffilmtop struct {
+type Mesfilmsnet struct {
 	schema.MovieFilmSource
 	*http.Client
 }
 
-func (is *Vffilmtop) Verify(name string) bool {
-	return strings.Contains("vffilmtop", name)
+func (is *Mesfilmsnet) Verify(name string) bool {
+	return strings.Contains("mesfilmsnet", name)
 }
 
-func (is *Vffilmtop) SetData(source schema.MovieFilmSource, client *http.Client) {
+func (is *Mesfilmsnet) SetData(source schema.MovieFilmSource, client *http.Client) {
 	is.MovieFilmSource = source
 	is.Client = client
 }
 
-func (is *Vffilmtop) FilmPostList(page int) []schema.MoviePost {
+func (is *Mesfilmsnet) FilmPostList(page int) []schema.MoviePost {
 	response, err := is.Get(fmt.Sprintf("%s%s", is.URL, fmt.Sprintf(is.LatestFilmsURL, page)))
 	if err != nil {
 		return nil
@@ -38,7 +40,7 @@ func (is *Vffilmtop) FilmPostList(page int) []schema.MoviePost {
 	return is.filmPostList(crawler.NewElement(document.Selection))
 }
 
-func (is *Vffilmtop) filmPostList(document *crawler.Element) []schema.MoviePost {
+func (is *Mesfilmsnet) filmPostList(document *crawler.Element) []schema.MoviePost {
 	selector := is.FilmPostSelector
 	filmList := make([]schema.MoviePost, 0)
 	document.ForEach(selector.List[0],
@@ -47,7 +49,7 @@ func (is *Vffilmtop) filmPostList(document *crawler.Element) []schema.MoviePost 
 			link := element.ChildAttribute(selector.Link[0], selector.Link[1])
 			title := element.ChildText(selector.Title[0])
 			filmList = append(filmList, schema.MoviePost{
-				Image:  strings.ReplaceAll(strings.ReplaceAll(image, "w185", "w780"), "//", "https://"),
+				Image:  strings.ReplaceAll(image, ".jpg", "h.jpg"),
 				Source: is.Name,
 				Title:  title,
 				Link:   link,
@@ -56,7 +58,7 @@ func (is *Vffilmtop) filmPostList(document *crawler.Element) []schema.MoviePost 
 	return filmList
 }
 
-func (is *Vffilmtop) SearchFilmPostList(query string, page int) []schema.MoviePost {
+func (is *Mesfilmsnet) SearchFilmPostList(query string, page int) []schema.MoviePost {
 	response, err := is.Get(fmt.Sprintf("%s%s", is.URL, fmt.Sprintf(is.LatestFilmsURL, query, page)))
 	if err != nil {
 		return nil
@@ -68,7 +70,7 @@ func (is *Vffilmtop) SearchFilmPostList(query string, page int) []schema.MoviePo
 	return is.filmPostList(crawler.NewElement(document.Selection))
 }
 
-func (is *Vffilmtop) FilmArticle(link string) *schema.MovieFilmArticle {
+func (is *Mesfilmsnet) FilmArticle(link string) *schema.MovieFilmArticle {
 	response, err := is.Get(link)
 	if err != nil {
 		return nil
@@ -80,14 +82,23 @@ func (is *Vffilmtop) FilmArticle(link string) *schema.MovieFilmArticle {
 	return is.filmArticle(crawler.NewElement(document.Selection))
 }
 
-func (is *Vffilmtop) filmArticle(document *crawler.Element) *schema.MovieFilmArticle {
-	var result []string
+func (is *Mesfilmsnet) filmArticle(document *crawler.Element) *schema.MovieFilmArticle {
 	articleSelector := is.MovieFilmArticleSelector
-	hosters := document.ChildContents(articleSelector.Hosters[0])
-	for _, hoster := range hosters {
-		document, _ := goquery.NewDocumentFromReader(strings.NewReader(html.UnescapeString(hoster)))
-		element := crawler.NewElement(document.Selection)
-		result = append(result, element.ChildAttribute("iframe", "src"))
+	posts := document.ChildAttributes(articleSelector.Hosters[0], "data-post")
+	numes := document.ChildAttributes(articleSelector.Hosters[0], "data-nume")
+	var hosters []string
+	for i, post := range posts {
+		nume := numes[i]
+		response, _ := http.PostForm(fmt.Sprintf("%s/wp-admin/admin-ajax.php", is.URL), url.Values{
+			"action": []string{"doo_player_ajax"},
+			"type":   []string{"movie"},
+			"post":   []string{post},
+			"nume":   []string{nume},
+		})
+		b, _ := io.ReadAll(response.Body)
+		var data map[string]string
+		json.Unmarshal(b, &data)
+		hosters = append(hosters, data["embed_url"])
 	}
-	return &schema.MovieFilmArticle{Hosters: result}
+	return &schema.MovieFilmArticle{Hosters: hosters}
 }

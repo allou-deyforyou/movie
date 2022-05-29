@@ -69,6 +69,12 @@ functions:
       - httpApi:
           path: /film/article
           method: get
+  searchFilms:
+    handler: bin/search_films
+    events:
+      - httpApi:
+          path: /film/search
+          method: get
   video:
     handler: bin/video
     events:

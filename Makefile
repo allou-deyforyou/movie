@@ -5,6 +5,8 @@ build:
 	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/films films/main.go
 	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/video video/main.go
 	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/articles articles/main.go
+	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/search_films films/search/main.go
+
 
 clean:
 	rm -rf ./bin ./vendor Gopkg.lock

@@ -27,6 +27,14 @@ func (element *Element) ChildContent(selector string) string {
 	return html
 }
 
+func (element *Element) ChildContents(selector string) (values []string) {
+	element.Selection.Find(selector).Each(func(_ int, selection *goquery.Selection) {
+		content, _ := selection.Html()
+		values = append(values, strings.TrimSpace(content))
+	})
+	return values
+}
+
 func (element *Element) ChildText(selector string) string {
 	return strings.TrimSpace(element.Selection.Find(selector).Text())
 }
