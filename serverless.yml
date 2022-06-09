@@ -11,9 +11,9 @@
 #
 # Happy Coding!
 
-service: server
+service: yola-server
 # app and org for use with dashboard.serverless.com
-app: server
+app: yola
 org: vodino
 
 # You can pin your service to only deploy with a specific Serverless version
@@ -47,9 +47,8 @@ provider:
 #                - "/*"
 
 # you can define service wide environment variables here
-  environment:
-    FIREBASE_PROJECT_ID: yola-340622
-    FIREBASE_CREDENTIALS_FILE_NAME: yola-340622-firebase-adminsdk-823pn-0cad271a6c.json
+#  environment:
+#    variable1: value1
 
 package:
   patterns:
@@ -57,29 +56,61 @@ package:
     - ./bin/**
     - yola-340622-firebase-adminsdk-823pn-0cad271a6c.json
 functions:
-  films:
-    handler: bin/films
-    events:
-      - httpApi:
-          path: /films/page/{page}
-          method: get
   filmArticle:
-    handler: bin/articles
+    handler: bin/film_article
     events:
       - httpApi:
           path: /film/article
           method: get
-  searchFilms:
-    handler: bin/search_films
+  filmLatest:
+    handler: bin/film_latest
     events:
       - httpApi:
-          path: /film/search
+          path: /film/latest/{page}
           method: get
-  video:
-    handler: bin/video
+  filmSearch:
+    handler: bin/film_search
     events:
       - httpApi:
-          path: /movie/video
+          path: /search/film/{page}
+          method: get
+
+  serieArticle:
+    handler: bin/serie_article
+    events:
+      - httpApi:
+          path: /serie/article
+          method: get
+  serieLatest:
+    handler: bin/serie_latest
+    events:
+      - httpApi:
+          path: /serie/latest/{page}
+          method: get
+  serieSearch:
+    handler: bin/serie_search
+    events:
+      - httpApi:
+          path: /search/serie/{page}
+          method: get
+
+  mangaArticle:
+    handler: bin/manga_article
+    events:
+      - httpApi:
+          path: /manga/article
+          method: get
+  mangaLatest:
+    handler: bin/manga_latest
+    events:
+      - httpApi:
+          path: /manga/latest/{page}
+          method: get
+  mangaSearch:
+    handler: bin/manga_search
+    events:
+      - httpApi:
+          path: /search/manga/{page}
           method: get
 
 #    The following are a few example events you can configure
