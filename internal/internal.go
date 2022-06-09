@@ -12,6 +12,8 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
+type MovieServiceCallBack func([]schema.MovieSource)
+
 func NewFirebaseClient() (*firestore.Client, error) {
 	firebaseCredentialsFile := option.WithCredentialsFile("yola-340622-firebase-adminsdk-823pn-0cad271a6c.json")
 	firebaseProjectID := "yola-340622"
@@ -36,6 +38,30 @@ func GetAllMovieService(collection firestore.Query) []schema.MovieSource {
 		results = append(results, *data)
 	}
 	return results
+}
+
+func SnapshotAllMovieService(collection firestore.Query, callBack MovieServiceCallBack) {
+	snapshotIterator := collection.Snapshots(context.Background())
+	for {
+		snapshot, err := snapshotIterator.Next()
+		if err != nil {
+			snapshotIterator.Stop()
+			panic(err)
+		}
+		documentList, err := snapshot.Documents.GetAll()
+		if err != nil {
+			snapshotIterator.Stop()
+			panic(err)
+		}
+		results := make([]schema.MovieSource, 0)
+		for _, document := range documentList {
+			data := new(schema.MovieSource)
+			b, _ := json.Marshal(document.Data())
+			json.Unmarshal(b, data)
+			results = append(results, *data)
+		}
+		callBack(results)
+	}
 }
 
 func ServeResponse(data interface{}) (events.APIGatewayProxyResponse, error) {

@@ -13,23 +13,26 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-var sources = make([]source.MangaSource, 0)
+var sources = make([]schema.MovieSource, 0)
 
 func init() {
 	firestoreClient, err := internal.NewFirebaseClient()
 	if err != nil {
 		panic(err)
 	}
-	movieSources := internal.GetAllMovieService(
+	sources = internal.GetAllMovieService(
 		firestoreClient.Collection(
 			schema.MOVIE_SOURCES_COLLECTION,
 		).Where("status", "==", true),
 	)
-	for _, movieSource := range movieSources {
-		if source, err := source.ParseMangaSource(movieSource.Name, movieSource); err == nil {
-			sources = append(sources, source)
-		}
-	}
+	internal.SnapshotAllMovieService(
+		firestoreClient.Collection(
+			schema.MOVIE_SOURCES_COLLECTION,
+		).Where("status", "==", true),
+		func(ms []schema.MovieSource) {
+			sources = ms
+		},
+	)
 }
 
 func main() {
@@ -37,10 +40,16 @@ func main() {
 }
 
 func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	var movieSources []source.MangaSource
+	for _, movieSource := range sources {
+		if source, err := source.ParseMangaSource(movieSource.Name, movieSource); err == nil {
+			movieSources = append(movieSources, source)
+		}
+	}
 	page, _ := strconv.Atoi(request.PathParameters["page"])
 	response := make([]schema.MoviePost, 0)
 	group := new(sync.WaitGroup)
-	for _, s := range sources {
+	for _, s := range movieSources {
 		group.Add(1)
 		go func(source source.MangaSource) {
 			posts := source.MangaLatestPostList(page)
@@ -49,6 +58,5 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		}(s)
 	}
 	group.Wait()
-
 	return internal.ServeResponse(response)
 }
