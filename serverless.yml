@@ -22,7 +22,7 @@ frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: go1.x
+  runtime: go1.18.3
 
 # you can overwrite defaults here
 #  stage: dev
