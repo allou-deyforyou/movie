@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"yola/internal/schema"
 
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/option"
@@ -21,15 +22,15 @@ func NewFirebaseClient() (*firestore.Client, error) {
 	return client, nil
 }
 
-func GetAll[T interface{}](collection firestore.Query) []T {
+func GetAllMovieService(collection firestore.Query) []schema.MovieSource {
 	documentIterator := collection.Documents(context.Background())
 	documentList, err := documentIterator.GetAll()
 	if err != nil {
 		panic(err)
 	}
-	results := make([]T, 0)
+	results := make([]schema.MovieSource, 0)
 	for _, document := range documentList {
-		data := new(T)
+		data := new(schema.MovieSource)
 		b, _ := json.Marshal(document.Data())
 		json.Unmarshal(b, data)
 		results = append(results, *data)

@@ -19,7 +19,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	sources = internal.GetAll[schema.MovieSource](
+	sources = internal.GetAllMovieService(
 		firestoreClient.Collection(
 			schema.MOVIE_SOURCES_COLLECTION,
 		).Where("status", "==", true),
