@@ -130,7 +130,6 @@ func (is *VostFreeSource) mangaArticle(document *crawler.Element) *schema.MovieA
 			}
 			return true
 		})
-
 	genders := make([]string, 0)
 	document.ForEachWithBreak(articleSelector.Genders[0],
 		func(i int, e *crawler.Element) bool {
@@ -140,7 +139,6 @@ func (is *VostFreeSource) mangaArticle(document *crawler.Element) *schema.MovieA
 			}
 			return true
 		})
-
 	videos := make([]schema.MovieVideo, 0)
 	for _, videoSelector := range articleSelector.Videos {
 		document.ForEach(videoSelector.Hosters[0],
