@@ -24,14 +24,16 @@ func init() {
 			schema.MOVIE_SOURCES_COLLECTION,
 		).Where("status", "==", true),
 	)
-	internal.SnapshotAllMovieService(
+	go func (sources *[]schema.MovieSource)  {
+		internal.SnapshotAllMovieService(
 		firestoreClient.Collection(
 			schema.MOVIE_SOURCES_COLLECTION,
 		).Where("status", "==", true),
 		func(ms []schema.MovieSource) {
-			sources = ms
+			*sources = ms
 		},
 	)
+	}(&sources)
 }
 
 func main() {
