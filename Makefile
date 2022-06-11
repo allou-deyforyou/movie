@@ -1,6 +1,8 @@
 .PHONY: build clean deploy
 
 build:
+	sudo apt install chromium-browser
+
 	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/film_article handler/film_article/main.go
 	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/film_latest handler/film_latest/main.go
 	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/film_search handler/film_search/main.go
@@ -13,7 +15,6 @@ build:
 	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/manga_latest handler/manga_latest/main.go
 	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/manga_search handler/manga_search/main.go
 
-	sudo apt install chromium-browser
 
 clean:
 	rm -rf ./bin ./vendor Gopkg.lock
