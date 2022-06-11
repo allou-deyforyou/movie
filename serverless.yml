@@ -50,6 +50,11 @@ provider:
 #  environment:
 #    variable1: value1
 
+custom:
+  googleChrome:
+    dockerizePip: true
+    dockerFile: ./Dockerfile
+
 package:
   patterns:
     - '!./**'
