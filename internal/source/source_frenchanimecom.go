@@ -2,6 +2,7 @@ package source
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"path"
 	"strconv"
@@ -12,19 +13,19 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-type VostFreeSource struct {
+type FrenchAnimeComSource struct {
 	*schema.MovieSource
 	*http.Client
 }
 
-func NewVostFreeSource(source *schema.MovieSource) *VostFreeSource {
-	return &VostFreeSource{
+func NewFrenchAnimeComSource(source *schema.MovieSource) *FrenchAnimeComSource {
+	return &FrenchAnimeComSource{
 		Client:      http.DefaultClient,
 		MovieSource: source,
 	}
 }
 
-func (is *VostFreeSource) MangaLatestPostList(page int) []schema.MoviePost {
+func (is *FrenchAnimeComSource) MangaLatestPostList(page int) []schema.MoviePost {
 	response, err := is.Get(fmt.Sprintf("%s%s", is.URL, fmt.Sprintf(is.MangaLatestURL, page)))
 	if err != nil {
 		return nil
@@ -37,7 +38,7 @@ func (is *VostFreeSource) MangaLatestPostList(page int) []schema.MoviePost {
 	return is.mangaLatestPostList(crawler.NewElement(document.Selection))
 }
 
-func (is *VostFreeSource) mangaLatestPostList(document *crawler.Element) []schema.MoviePost {
+func (is *FrenchAnimeComSource) mangaLatestPostList(document *crawler.Element) []schema.MoviePost {
 	selector := is.MangaLatestPostSelector
 	mangaList := make([]schema.MoviePost, 0)
 	document.ForEach(selector.List[0],
@@ -64,8 +65,9 @@ func (is *VostFreeSource) mangaLatestPostList(document *crawler.Element) []schem
 	return mangaList
 }
 
-func (is *VostFreeSource) MangaSearchPostList(query string, page int) []schema.MoviePost {
+func (is *FrenchAnimeComSource) MangaSearchPostList(query string, page int) []schema.MoviePost {
 	response, err := is.Get(fmt.Sprintf("%s%s", is.URL, fmt.Sprintf(is.MangaSearchURL, page)))
+	log.Println(response.Status)
 	if err != nil {
 		return nil
 	}
@@ -76,7 +78,7 @@ func (is *VostFreeSource) MangaSearchPostList(query string, page int) []schema.M
 	return is.mangaSearchPostList(crawler.NewElement(document.Selection))
 }
 
-func (is *VostFreeSource) mangaSearchPostList(document *crawler.Element) []schema.MoviePost {
+func (is *FrenchAnimeComSource) mangaSearchPostList(document *crawler.Element) []schema.MoviePost {
 	selector := is.MangaSearchPostSelector
 	mangaList := make([]schema.MoviePost, 0)
 	document.ForEach(selector.List[0],
@@ -103,7 +105,7 @@ func (is *VostFreeSource) mangaSearchPostList(document *crawler.Element) []schem
 	return mangaList
 }
 
-func (is *VostFreeSource) MangaArticle(link string) *schema.MovieArticle {
+func (is *FrenchAnimeComSource) MangaArticle(link string) *schema.MovieArticle {
 	response, err := is.Get(link)
 	if err != nil {
 		return nil
@@ -116,59 +118,50 @@ func (is *VostFreeSource) MangaArticle(link string) *schema.MovieArticle {
 	return is.mangaArticle(crawler.NewElement(document.Selection))
 }
 
-func (is *VostFreeSource) mangaArticle(document *crawler.Element) *schema.MovieArticle {
+func (is *FrenchAnimeComSource) mangaArticle(document *crawler.Element) *schema.MovieArticle {
 	articleSelector := is.MangaArticleSelector
-	description := strings.Join(strings.Fields(document.ChildText(articleSelector.Description[0])), " ")
 	// imdb := document.ChildText(articleSelector.Imdb[0])
 
-	var date string
+	var description string
 	document.ForEachWithBreak(articleSelector.Date[0],
 		func(i int, e *crawler.Element) bool {
-			if strings.Contains(strings.ToLower(e.ChildText("span")), "année") {
-				date = strings.TrimSpace(e.ChildText("a"))
+			if strings.Contains(strings.ToLower(e.Text()), "synopsis") {
+				description = strings.TrimSpace(e.ChildText(articleSelector.Date[1]))
 				return false
 			}
 			return true
 		})
+
+	var date string
+	document.ForEachWithBreak(articleSelector.Date[0],
+		func(i int, e *crawler.Element) bool {
+			if strings.Contains(strings.ToLower(e.Text()), "sortie") {
+				date = strings.TrimSpace(e.ChildText(articleSelector.Date[1]))
+				return false
+			}
+			return true
+		})
+
 	genders := make([]string, 0)
 	document.ForEachWithBreak(articleSelector.Genders[0],
 		func(i int, e *crawler.Element) bool {
 			if strings.Contains(strings.ToLower(e.Text()), "genre") {
-				genders = append(genders, e.ChildTexts("a")...)
+				genders = append(genders, e.ChildTexts(articleSelector.Genders[0]+" a")...)
 				return false
 			}
 			return true
 		})
 	videos := make([]schema.MovieVideo, 0)
-	for _, videoSelector := range articleSelector.Videos {
-		document.ForEach(videoSelector.Hosters[0],
-			func(index int, episode *crawler.Element) {
-				subtitleHosters := make([]string, 0)
-				hosters := make([]string, 0)
-				episode.ForEach("div",
-					func(_ int, hoster *crawler.Element) {
-						id := fmt.Sprintf("#content_%v", hoster.Attribute("id"))
-						link := document.ChildText(id)
-						switch strings.ToLower(hoster.Text()) {
-						case "uqload":
-							link = fmt.Sprintf("https://uqload.com/embed-%v.html", link)
-						case "sibnet":
-							link = fmt.Sprintf("https://video.sibnet.ru/shell.php?videoid=%v", link)
-						case "mytv":
-							link = fmt.Sprintf("https://www.myvi.tv/embed/%v", link)
-						}
-						if strings.Contains(strings.ToLower(document.ChildText(".slide-middle h1")), "vf") {
-							hosters = append(hosters, link)
-						} else {
-							subtitleHosters = append(subtitleHosters, link)
-						}
-					})
-				videos = append(videos, schema.MovieVideo{
-					Name:            strconv.Itoa(index + 1),
-					SubtitleHosters: subtitleHosters,
-					Hosters:         hosters,
-				})
-			})
+	data := document.ChildText(articleSelector.Hosters[0])
+	for index, value := range strings.Split(data, "!") {
+		if index == 0 {
+			continue
+		}
+		videos = append(videos, schema.MovieVideo{
+			SubtitleHosters: strings.Split(value, ","),
+			Name:            strconv.Itoa(index),
+			Hosters:         []string{},
+		})
 	}
 	if len(genders) == 0 {
 		genders = append(genders, "N/A")

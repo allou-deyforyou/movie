@@ -2,7 +2,9 @@ package internal_test
 
 import (
 	"context"
+	"log"
 	"testing"
+	"yola/internal"
 	"yola/internal/schema"
 
 	"cloud.google.com/go/firestore"
@@ -19,6 +21,37 @@ func init() {
 		panic(err)
 	}
 	firestoreClient = client
+}
+
+func TestCreateIllimitestreamingcoSource(t *testing.T) {
+	firestoreClient.Collection(
+		schema.MOVIE_SOURCES_COLLECTION,
+	).Add(context.Background(), schema.MovieSource{
+		Status:        true,
+		Name:          "illimitestreaming-co",
+		URL:           "https://www.illimitestreaming.co/",
+		FilmLatestURL: "/film/page/%v",
+		FilmLatestPostSelector: &schema.MoviePostSelector{
+			Title: []string{"h2"},
+			Image: []string{"img", "data-original"},
+			Link:  []string{"a", "href"},
+			List:  []string{".movies-list .ml-item"},
+		},
+		FilmSearchURL: "/page/%v?s=%v",
+		FilmSearchPostSelector: &schema.MoviePostSelector{
+			Title: []string{"h2"},
+			Image: []string{"img", "data-original"},
+			Link:  []string{"a", "href"},
+			List:  []string{".movies-list .ml-item"},
+		},
+		FilmArticleSelector: &schema.MovieArticleSelector{
+			Imdb:        []string{".mvic-desc p"},
+			Genders:     []string{".mvic-desc p"},
+			Date:        []string{".mvic-desc p"},
+			Hosters:     []string{".idTabs > div"},
+			Description: []string{".mvic-desc .desc"},
+		},
+	})
 }
 
 func TestCreateFrenchStreamSource(t *testing.T) {
@@ -43,9 +76,7 @@ func TestCreateFrenchStreamSource(t *testing.T) {
 			List:  []string{"#dle-content > .short"},
 		},
 		FilmArticleSelector: &schema.MovieArticleSelector{
-			Videos: []schema.MovieVideoSelector{
-				{Hosters: []string{"#primary_nav_wrap > ul > li"}},
-			},
+			Hosters:     []string{"#primary_nav_wrap > ul > li"},
 			Imdb:        []string{".fmain .frate .fr-count"},
 			Genders:     []string{".fmain .flist li"},
 			Date:        []string{".fmain .flist li"},
@@ -67,9 +98,7 @@ func TestCreateFrenchStreamSource(t *testing.T) {
 			List:  []string{"#dle-content > .short"},
 		},
 		SerieArticleSelector: &schema.MovieArticleSelector{
-			Videos: []schema.MovieVideoSelector{
-				{Hosters: []string{".elink", "a"}},
-			},
+			Hosters:     []string{".elink", "a"},
 			Imdb:        []string{".fmain .frate .fr-count"},
 			Genders:     []string{".fmain .flist li"},
 			Date:        []string{".fmain .flist li"},
@@ -100,9 +129,7 @@ func TestCreateFrenchMangaNetSource(t *testing.T) {
 			List:  []string{"#dle-content > .short"},
 		},
 		MangaArticleSelector: &schema.MovieArticleSelector{
-			Videos: []schema.MovieVideoSelector{
-				{Hosters: []string{".elink", "a"}},
-			},
+			Hosters:     []string{".elink", "a"},
 			Imdb:        []string{".fmain .frate .fr-count"},
 			Genders:     []string{".fmain .flist li"},
 			Date:        []string{".fmain .flist li"},
@@ -111,69 +138,42 @@ func TestCreateFrenchMangaNetSource(t *testing.T) {
 	})
 }
 
-func TestCreateNekoSamaFrSource(t *testing.T) {
+func TestCreateFrenchAnimeSource(t *testing.T) {
 	firestoreClient.Collection(
 		schema.MOVIE_SOURCES_COLLECTION,
 	).Add(context.Background(), schema.MovieSource{
 		Status:         true,
-		Name:           "vostfree-tv",
-		URL:            "https://vostfree.tv",
+		Name:           "french-anime-com",
+		URL:            "https://french-anime.com/",
 		MangaLatestURL: "/animes-vostfr/page/%v",
 		MangaLatestPostSelector: &schema.MoviePostSelector{
-			Title: []string{".title"},
+			Title: []string{".mov-t"},
 			Image: []string{"img", "src"},
 			Link:  []string{"a", "href"},
-			List:  []string{"#dle-content .movie-poster"},
+			List:  []string{"#dle-content > .mov"},
 		},
-		MangaSearchURL: "/",
+		MangaSearchURL: "/index.php?do=search",
 		MangaSearchPostSelector: &schema.MoviePostSelector{
-			Title: []string{".title"},
+			Title: []string{".mov-t"},
 			Image: []string{"img", "src"},
 			Link:  []string{"a", "href"},
-			List:  []string{"#dle-content .search-result"},
+			List:  []string{"#dle-content > .mov"},
 		},
 		MangaArticleSelector: &schema.MovieArticleSelector{
-			Videos: []schema.MovieVideoSelector{
-				{Hosters: []string{".new_player_bottom .button_box"}},
-			},
+			Hosters:     []string{".eps"},
 			Imdb:        []string{""},
-			Description: []string{".slide-middle .slide-desc"},
-			Genders:     []string{".slide-middle .right"},
-			Date:        []string{".slide-info p"},
+			Description: []string{".mov-list li", ".mov-desc"},
+			Genders:     []string{".mov-list li", ".mov-desc"},
+			Date:        []string{".mov-list li", ".mov-desc"},
 		},
 	})
 }
 
-func TestCreateIllimitestreamingcoSource(t *testing.T) {
-	firestoreClient.Collection(
-		schema.MOVIE_SOURCES_COLLECTION,
-	).Add(context.Background(), schema.MovieSource{
-		Status:        true,
-		Name:          "illimitestreaming-co",
-		URL:           "https://www.illimitestreaming.co/",
-		FilmLatestURL: "/film/page/%v",
-		FilmLatestPostSelector: &schema.MoviePostSelector{
-			Title: []string{"h2"},
-			Image: []string{"img", "data-original"},
-			Link:  []string{"a", "href"},
-			List:  []string{".movies-list .ml-item"},
-		},
-		FilmSearchURL: "/page/%v?s=%v",
-		FilmSearchPostSelector: &schema.MoviePostSelector{
-			Title: []string{"h2"},
-			Image: []string{"img", "data-original"},
-			Link:  []string{"a", "href"},
-			List:  []string{".movies-list .ml-item"},
-		},
-		FilmArticleSelector: &schema.MovieArticleSelector{
-			Videos: []schema.MovieVideoSelector{
-				{Hosters: []string{".idTabs > #list-downloads"}},
-			},
-			Imdb:        []string{".mvic-desc p"},
-			Genders:     []string{".mvic-desc p"},
-			Date:        []string{".mvic-desc p"},
-			Description: []string{".mvic-desc .desc"},
-		},
-	})
-
+func TestGetAllMovieService(t *testing.T) {
+	sources := internal.GetAllMovieService(
+		firestoreClient.Collection(
+			schema.MOVIE_SOURCES_COLLECTION,
+		).Where("status", "==", true),
+	)
+	log.Println(sources)
 }

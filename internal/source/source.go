@@ -5,11 +5,6 @@ import (
 	"yola/internal/schema"
 )
 
-type Source interface {
-	MangaSource
-	SerieSource
-	FilmSource
-}
 
 type MangaSource interface {
 	MangaArticle(link string) *schema.MovieArticle
@@ -31,10 +26,10 @@ type FilmSource interface {
 
 func ParseMangaSource(name string, source schema.MovieSource) (MangaSource, error) {
 	switch name {
+	case "french-anime-com":
+		return NewFrenchAnimeComSource(&source), nil
 	case "french-manga-net":
 		return NewFrenchMangaNetSource(&source), nil
-	case "vostfree-tv":
-		return NewVostFreeSource(&source), nil
 	default:
 		return nil, errors.New("no-found")
 	}

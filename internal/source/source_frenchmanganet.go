@@ -26,6 +26,7 @@ func NewFrenchMangaNetSource(source *schema.MovieSource) *FrenchMangaNetSource {
 }
 
 func (is *FrenchMangaNetSource) MangaLatestPostList(page int) []schema.MoviePost {
+	fmt.Println("FrenchMangaNetSource")
 	response, err := is.Get(fmt.Sprintf("%s%s", is.URL, fmt.Sprintf(is.MangaLatestURL, page)))
 	if err != nil {
 		return nil
@@ -105,10 +106,10 @@ func (is *FrenchMangaNetSource) mangaSearchPostList(document *crawler.Element) [
 			}
 			mangaList = append(mangaList, schema.MoviePost{
 				Category: schema.MovieManga,
-				Source: is.Name,
-				Image:  image,
-				Title:  title,
-				Link:   link,
+				Source:   is.Name,
+				Image:    image,
+				Title:    title,
+				Link:     link,
 			})
 		})
 	return mangaList
@@ -153,54 +154,53 @@ func (is *FrenchMangaNetSource) mangaArticle(document *crawler.Element) *schema.
 		})
 
 	videos := make([]schema.MovieVideo, 0)
-	for _, videoSelector := range articleSelector.Videos {
-		videosMap := make(map[string]schema.MovieVideo)
-		document.ForEach(videoSelector.Hosters[0],
-			func(index int, version *crawler.Element) {
-				version.ForEach(videoSelector.Hosters[1], func(i int, episode *crawler.Element) {
-					id := strings.TrimSpace(strings.TrimPrefix(strings.ToLower(episode.Attribute("title")), "episode"))
-					video := schema.MovieVideo{Name: id, Hosters: make([]string, 0), SubtitleHosters: make([]string, 0)}
-					if v, ok := videosMap[id]; ok {
-						video = v
-					}
-					ref := episode.Attribute("data-rel")
-					if index == 0 {
-						if ref == "" {
-							video.Hosters = append(video.Hosters, episode.Attribute("href"))
-						} else {
-							document.ForEach(fmt.Sprintf("#%v li a", ref), func(i int, hoster *crawler.Element) {
-								link := strings.TrimSpace(hoster.Attribute("href"))
-								if link == "" {
-									video.Hosters = append(video.Hosters, episode.Attribute("href"))
-								} else {
-									if hoster.ChildAttribute("i", "aria-hidden") != "" {
-										video.Hosters = append(video.Hosters, link)
-									}
-								}
-							})
-						}
+
+	videosMap := make(map[string]schema.MovieVideo)
+	document.ForEach(articleSelector.Hosters[0],
+		func(index int, version *crawler.Element) {
+			version.ForEach(articleSelector.Hosters[1], func(i int, episode *crawler.Element) {
+				id := strings.TrimSpace(strings.TrimPrefix(strings.ToLower(episode.Attribute("title")), "episode"))
+				video := schema.MovieVideo{Name: id, Hosters: make([]string, 0), SubtitleHosters: make([]string, 0)}
+				if v, ok := videosMap[id]; ok {
+					video = v
+				}
+				ref := episode.Attribute("data-rel")
+				if index == 0 {
+					if ref == "" {
+						video.Hosters = append(video.Hosters, episode.Attribute("href"))
 					} else {
-						if ref == "" {
-							video.SubtitleHosters = append(video.SubtitleHosters, episode.Attribute("href"))
-						} else {
-							document.ForEach(fmt.Sprintf("#%v li a", ref), func(i int, hoster *crawler.Element) {
-								link := strings.TrimSpace(hoster.Attribute("href"))
-								if link == "" {
-									video.Hosters = append(video.Hosters, episode.Attribute("href"))
-								} else {
-									if hoster.ChildAttribute("i", "aria-hidden") != "" {
-										video.SubtitleHosters = append(video.SubtitleHosters, link)
-									}
+						document.ForEach(fmt.Sprintf("#%v li a", ref), func(i int, hoster *crawler.Element) {
+							link := strings.TrimSpace(hoster.Attribute("href"))
+							if link == "" {
+								video.Hosters = append(video.Hosters, episode.Attribute("href"))
+							} else {
+								if hoster.ChildAttribute("i", "aria-hidden") != "" {
+									video.Hosters = append(video.Hosters, link)
 								}
-							})
-						}
+							}
+						})
 					}
-					videosMap[id] = video
-				})
+				} else {
+					if ref == "" {
+						video.SubtitleHosters = append(video.SubtitleHosters, episode.Attribute("href"))
+					} else {
+						document.ForEach(fmt.Sprintf("#%v li a", ref), func(i int, hoster *crawler.Element) {
+							link := strings.TrimSpace(hoster.Attribute("href"))
+							if link == "" {
+								video.Hosters = append(video.Hosters, episode.Attribute("href"))
+							} else {
+								if hoster.ChildAttribute("i", "aria-hidden") != "" {
+									video.SubtitleHosters = append(video.SubtitleHosters, link)
+								}
+							}
+						})
+					}
+				}
+				videosMap[id] = video
 			})
-		for _, v := range videosMap {
-			videos = append(videos, v)
-		}
+		})
+	for _, v := range videosMap {
+		videos = append(videos, v)
 	}
 	if len(genders) == 0 {
 		genders = append(genders, "N/A")

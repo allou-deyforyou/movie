@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"sync"
 
@@ -25,15 +26,15 @@ func init() {
 			schema.MOVIE_SOURCES_COLLECTION,
 		).Where("status", "==", true),
 	)
-	go func (sources *[]schema.MovieSource)  {
+	go func(sources *[]schema.MovieSource) {
 		internal.SnapshotAllMovieService(
-		firestoreClient.Collection(
-			schema.MOVIE_SOURCES_COLLECTION,
-		).Where("status", "==", true),
-		func(ms []schema.MovieSource) {
-			*sources = ms
-		},
-	)
+			firestoreClient.Collection(
+				schema.MOVIE_SOURCES_COLLECTION,
+			).Where("status", "==", true),
+			func(ms []schema.MovieSource) {
+				*sources = ms
+			},
+		)
 	}(&sources)
 }
 
@@ -54,6 +55,12 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	for _, s := range movieSources {
 		group.Add(1)
 		go func(source source.MangaSource) {
+			defer func() {
+				if r := recover(); r != nil {
+					fmt.Println("Recovered in f", r)
+					group.Done()
+				}
+			}()
 			posts := source.MangaLatestPostList(page)
 			response = append(response, posts...)
 			group.Done()

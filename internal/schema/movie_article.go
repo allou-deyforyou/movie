@@ -15,11 +15,11 @@ type MovieArticle struct {
 }
 
 type MovieArticleSelector struct {
-	Description []string             `firestore:"description" json:"description"`
-	Genders     []string             `firestore:"genders" json:"genders"`
-	Videos      []MovieVideoSelector `firestore:"videos" json:"videos"`
-	Date        []string             `firestore:"date" json:"date"`
-	Imdb        []string             `firestore:"imdb" json:"imdb"`
+	Description []string `firestore:"description" json:"description"`
+	Genders     []string `firestore:"genders" json:"genders"`
+	Hosters     []string `firestore:"hosters" json:"hosters"`
+	Date        []string `firestore:"date" json:"date"`
+	Imdb        []string `firestore:"imdb" json:"imdb"`
 }
 
 type MovieVideoSelector struct {

@@ -37,6 +37,7 @@ func GetAllMovieService(collection firestore.Query) []schema.MovieSource {
 		json.Unmarshal(b, data)
 		results = append(results, *data)
 	}
+	documentIterator.Stop()
 	return results
 }
 
@@ -48,7 +49,8 @@ func SnapshotAllMovieService(collection firestore.Query, callBack MovieServiceCa
 			snapshotIterator.Stop()
 			panic(err)
 		}
-		documentList, err := snapshot.Documents.GetAll()
+		documentIterator := snapshot.Documents
+		documentList, err := documentIterator.GetAll()
 		if err != nil {
 			snapshotIterator.Stop()
 			panic(err)
@@ -60,6 +62,7 @@ func SnapshotAllMovieService(collection firestore.Query, callBack MovieServiceCa
 			json.Unmarshal(b, data)
 			results = append(results, *data)
 		}
+		documentIterator.Stop()
 		callBack(results)
 	}
 }

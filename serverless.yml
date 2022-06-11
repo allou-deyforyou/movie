@@ -23,7 +23,7 @@ frameworkVersion: '3'
 provider:
   name: aws
   runtime: go1.x
-
+  region: us-west-1
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1

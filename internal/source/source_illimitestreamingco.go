@@ -2,6 +2,7 @@ package source
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"path"
 	"strings"
@@ -98,10 +99,10 @@ func (is *Illimitestreamingco) filmSearchPostList(document *crawler.Element) []s
 			if strings.Contains(strings.ToLower(element.ChildText(".jtip-bottom")), "film") {
 				filmList = append(filmList, schema.MoviePost{
 					Category: schema.MovieFilm,
-					Source: is.Name,
-					Image:  image,
-					Title:  title,
-					Link:   link,
+					Source:   is.Name,
+					Image:    image,
+					Title:    title,
+					Link:     link,
 				})
 			}
 		})
@@ -155,27 +156,27 @@ func (is *Illimitestreamingco) filmArticle(document *crawler.Element) *schema.Mo
 		})
 
 	videos := make([]schema.MovieVideo, 0)
-	for _, videoSelector := range articleSelector.Videos {
-		subtitleHosters := make([]string, 0)
-		hosters := make([]string, 0)
-		document.ForEach(videoSelector.Hosters[0],
-			func(i int, e *crawler.Element) {
-				id := e.ChildAttribute("a", "href")
-				if id != "" {
-					link := document.ChildText(id)
-					if strings.TrimSpace(strings.ToLower(e.ChildText("span:nth-child(2) h6"))) == "vf" {
-						hosters = append(hosters, link)
-					} else {
-						subtitleHosters = append(subtitleHosters, link)
-					}
+	subtitleHosters := make([]string, 0)
+	hosters := make([]string, 0)
+	log.Println(document.ChildContent(articleSelector.Hosters[0]))
+	document.ForEach(articleSelector.Hosters[0],
+		func(i int, e *crawler.Element) {
+			id := e.ChildAttribute("a", "href")
+			if id != "" {
+				link := strings.ToLower(document.ChildText(id))
+				if strings.TrimSpace(strings.ToLower(e.ChildText("span:nth-child(2) h6"))) == "vf" {
+					hosters = append(hosters, link)
+				} else {
+					subtitleHosters = append(subtitleHosters, link)
 				}
-			})
-		videos = append(videos, schema.MovieVideo{
-			SubtitleHosters: subtitleHosters,
-			Hosters:         hosters,
-			Name:            "Film",
+			}
 		})
-	}
+	videos = append(videos, schema.MovieVideo{
+		SubtitleHosters: subtitleHosters,
+		Hosters:         hosters,
+		Name:            "Film",
+	})
+
 	if len(genders) == 0 {
 		genders = append(genders, "N/A")
 	}
