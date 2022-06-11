@@ -1,7 +1,7 @@
 .PHONY: build clean deploy
 
 build:
-	sudo apt install chromium-browser
+	apt install chromium-browser
 
 	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/film_article handler/film_article/main.go
 	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/film_latest handler/film_latest/main.go
