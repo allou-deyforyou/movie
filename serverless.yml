@@ -49,11 +49,10 @@ provider:
 # you can define service wide environment variables here
 #  environment:
 #    variable1: value1
-
-custom:
-  googleChrome:
-    dockerizePip: true
-    dockerFile: ./Dockerfile
+  ecr:
+    images:
+      appimage:
+        path: ./
 
 package:
   patterns:
@@ -74,6 +73,8 @@ functions:
           path: /film/latest/{page}
           method: get
   filmSearch:
+    image:
+      name: appimage
     handler: bin/film_search
     events:
       - httpApi:
