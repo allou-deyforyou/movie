@@ -1,10 +1,10 @@
-.PHONY: build clean deploy
+# .PHONY: build clean deploy
 
-build:
-	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/film_latest handler/film_latest/main.go
+# build:
+# 	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/film_latest handler/film_latest/main.go
 
-clean:
-	rm -rf ./bin ./vendor Gopkg.lock
+# clean:
+# 	rm -rf ./bin ./vendor Gopkg.lock
 
-deploy: clean build
-	sls deploy --verbose
+# deploy: clean build
+# 	sls deploy --verbose

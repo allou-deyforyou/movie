@@ -1,6 +1,8 @@
-FROM public.ecr.aws/lambda/go:1 as build
+FROM golang:1.18-alpine as build
 
-COPY . ${LAMBDA_TASK_ROOT}
+WORKDIR ${LAMBDA_TASK_ROOT}
+
+COPY . .
 
 RUN env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/film_latest handler/film_latest/main.go
 
