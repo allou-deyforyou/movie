@@ -1,6 +1,5 @@
 make --dry-run --always-make --keep-going --print-directory
-make: Entering directory '/home/deyforyou/Bureau/Project/Personal/Movie/server'
-# dep ensure -v (deyforyou)
+make: Entering directory '/home/deyforyou/Bureau/Project/Personal/Movie/server_test'
 env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/film_latest handler/film_latest/main.go
-make: Leaving directory '/home/deyforyou/Bureau/Project/Personal/Movie/server'
+make: Leaving directory '/home/deyforyou/Bureau/Project/Personal/Movie/server_test'
  

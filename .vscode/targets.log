@@ -1,6 +1,4 @@
 make all --print-data-base --no-builtin-variables --no-builtin-rules --question
-make: *** No rule to make target 'all'.  Stop.
-
 # GNU Make 4.2.1
 # Built for x86_64-pc-linux-gnu
 # Copyright (C) 1988-2016 Free Software Foundation, Inc.
@@ -8,7 +6,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Tue May 31 14:06:45 2022
+# Make data base, printed on Sun Jun 12 18:20:31 2022
 
 # Variables
 
@@ -39,13 +37,13 @@ GDMSESSION = cinnamon
 # default
 MAKE_VERSION := 4.2.1
 # makefile
-CURDIR := /home/deyforyou/Bureau/Project/Personal/Movie/server
+CURDIR := /home/deyforyou/Bureau/Project/Personal/Movie/server_test
 # makefile
 SHELL = /bin/sh
 # environment
 GDM_LANG = fr_FR
 # environment
-VSCODE_NLS_CONFIG = {"locale":"fr","availableLanguages":{"*":"fr"},"_languagePackId":"25fe6a3290ec415596628d4afc87a88c.fr","_translationsConfigFile":"/home/deyforyou/.config/Code/clp/25fe6a3290ec415596628d4afc87a88c.fr/tcf.json","_cacheRoot":"/home/deyforyou/.config/Code/clp/25fe6a3290ec415596628d4afc87a88c.fr","_resolvedLanguagePackCoreLocation":"/home/deyforyou/.config/Code/clp/25fe6a3290ec415596628d4afc87a88c.fr/c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5","_corruptedFile":"/home/deyforyou/.config/Code/clp/25fe6a3290ec415596628d4afc87a88c.fr/corrupted.info","_languagePackSupport":true}
+VSCODE_NLS_CONFIG = {"locale":"fr","availableLanguages":{"*":"fr"},"_languagePackId":"90c96d63e4230154cb1307da73de84dd.fr","_translationsConfigFile":"/home/deyforyou/.config/Code/clp/90c96d63e4230154cb1307da73de84dd.fr/tcf.json","_cacheRoot":"/home/deyforyou/.config/Code/clp/90c96d63e4230154cb1307da73de84dd.fr","_resolvedLanguagePackCoreLocation":"/home/deyforyou/.config/Code/clp/90c96d63e4230154cb1307da73de84dd.fr/4af164ea3a06f701fe3e89a2bcbb421d2026b68f","_corruptedFile":"/home/deyforyou/.config/Code/clp/90c96d63e4230154cb1307da73de84dd.fr/corrupted.info","_languagePackSupport":true}
 # environment
 _ = /usr/share/code/code
 # environment
@@ -85,7 +83,7 @@ PATH = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/
 # environment
 GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 # environment
-SESSION_MANAGER = local/deyforyou-HP-470-G7-Notebook-PC:@/tmp/.ICE-unix/1457,unix/deyforyou-HP-470-G7-Notebook-PC:/tmp/.ICE-unix/1457
+SESSION_MANAGER = local/deyforyou-HP-470-G7-Notebook-PC:@/tmp/.ICE-unix/1424,unix/deyforyou-HP-470-G7-Notebook-PC:/tmp/.ICE-unix/1424
 # environment
 XDG_RUNTIME_DIR = /run/user/1000
 # environment
@@ -107,7 +105,7 @@ XDG_SESSION_DESKTOP = cinnamon
 # environment
 SSH_AUTH_SOCK = /run/user/1000/keyring/ssh
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 2373
+GIO_LAUNCHED_DESKTOP_FILE_PID = 2344
 # automatic
 %F = $(notdir $%)
 # environment
@@ -115,7 +113,7 @@ DISPLAY = :0
 # environment
 VSCODE_PIPE_LOGGING = true
 # environment
-PWD = /home/deyforyou/Bureau/Project/Personal/Movie/server
+PWD = /home/deyforyou/Bureau/Project/Personal/Movie/server_test
 # environment
 QT_QPA_PLATFORMTHEME = qt5ct
 # default
@@ -123,7 +121,7 @@ QT_QPA_PLATFORMTHEME = qt5ct
 # environment
 XDG_SEAT = seat0
 # environment
-SSH_AGENT_PID = 1563
+SSH_AGENT_PID = 1531
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = X-Cinnamon
 # environment
@@ -135,7 +133,7 @@ HOME = /home/deyforyou
 # environment
 LESSCLOSE = /usr/bin/lesspipe %s %s
 # environment
-VSCODE_CODE_CACHE_PATH = /home/deyforyou/.config/Code/CachedData/c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5
+VSCODE_CODE_CACHE_PATH = /home/deyforyou/.config/Code/CachedData/4af164ea3a06f701fe3e89a2bcbb421d2026b68f
 # environment
 LOGNAME = deyforyou
 # environment
@@ -157,7 +155,7 @@ MAKECMDGOALS := all
 # environment
 SHLVL = 0
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-794dac58-91e2-464e-94d9-2f3c98847bf7.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-fad53940-e34e-4ef2-8841-53315b4afeec.sock
 # environment
 XDG_SESSION_ID = c1
 # environment
@@ -179,13 +177,12 @@ LANGUAGE = fr_FR
 # environment
 XDG_SEAT_PATH = /org/freedesktop/DisplayManager/Seat0
 # environment
-VSCODE_IPC_HOOK = /run/user/1000/vscode-d35cc35d-1.67.2-main.sock
+VSCODE_IPC_HOOK = /run/user/1000/vscode-d35cc35d-1.68.0-main.sock
 # makefile
 MAKEFLAGS = pqrR
 # environment
 MFLAGS = -pqrR
 # automatic
- 
 *D = $(patsubst %/,%,$(dir $*))
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
@@ -193,8 +190,6 @@ MFLAGS = -pqrR
 GDK_BACKEND = x11
 # automatic
 +F = $(notdir $+)
-# environment
-NO_AT_BRIDGE = 1
 # environment
 CINNAMON_VERSION = 5.2.7
 # environment
@@ -226,9 +221,9 @@ GJS_DEBUG_OUTPUT = stderr
 # environment
 LANG = C
 # environment
-VSCODE_PID = 2373
+VSCODE_PID = 2344
 # variable set hash-table stats:
-# Load=107/1024=10%, Rehash=0, Collisions=8/132=6%
+# Load=106/1024=10%, Rehash=0, Collisions=8/131=6%
 
 # Pattern-specific Variable Values
 
@@ -236,9 +231,9 @@ VSCODE_PID = 2373
 
 # Directories
 
-# . (device 64768, inode 11013732): 17 files, no impossibilities.
+# . (device 64768, inode 9704867): 15 files, no impossibilities.
 
-# 17 files, no impossibilities in 1 directories.
+# 15 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -261,7 +256,7 @@ all:
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-05-31 13:57:25.900557046
+#  Last modified 2022-06-12 13:42:55.203528874
 #  File has been updated.
 #  Successfully updated.
 
@@ -271,7 +266,6 @@ build:
 #  File does not exist.
 #  File has not been updated.
 #  recipe to execute (from 'Makefile', line 4):
-	# dep ensure -v (deyforyou)
 	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/film_latest handler/film_latest/main.go
 
 # Not a target:
@@ -285,16 +279,18 @@ clean:
 #  Implicit rule search has not been done.
 #  File does not exist.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 8):
+#  recipe to execute (from 'Makefile', line 7):
 	rm -rf ./bin ./vendor Gopkg.lock
+ 
+make: *** No rule to make target 'all'.  Stop.
+
 
 deploy: clean build
 #  Phony target (prerequisite of .PHONY).
 #  Implicit rule search has not been done.
- 
 #  File does not exist.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 11):
+#  recipe to execute (from 'Makefile', line 10):
 	sls deploy --verbose
 
 # files hash-table stats:
@@ -305,12 +301,12 @@ deploy: clean build
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 26 / storage = 268 B / avg = 10 B
-# current buf: size = 8162 B / used = 268 B / count = 26 / avg = 10 B
+# strcache buffers: 1 (0) / strings = 24 / storage = 250 B / avg = 10 B
+# current buf: size = 8162 B / used = 250 B / count = 24 / avg = 10 B
 
-# strcache performance: lookups = 39 / hit rate = 33%
+# strcache performance: lookups = 37 / hit rate = 35%
 # hash-table stats:
-# Load=26/8192=0%, Rehash=0, Collisions=1/39=3%
-# Finished Make data base on Tue May 31 14:06:45 2022
+# Load=24/8192=0%, Rehash=0, Collisions=1/37=3%
+# Finished Make data base on Sun Jun 12 18:20:31 2022
 
  
