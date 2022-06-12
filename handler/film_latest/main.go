@@ -52,6 +52,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		chromedp.Flag("disable-gpu", true),
 		chromedp.Flag("enable-automation", false),
 		chromedp.Flag("disable-extensions", false),
+		
 	)
 
 	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
